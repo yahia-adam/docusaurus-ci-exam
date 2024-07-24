@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -23,6 +26,12 @@ jobs:
 
       - name: Build Docusaurus site
         run: npm run build
+
+      - name: Verify build files
+        run: |
+          test -d build || (echo "Build directory does not exist" && exit 1)
+          test -f build/index.html || (echo "index.html does not exist" && exit 1)
+          test -d build/docs || (echo "Docs directory does not exist" && exit 1)
 
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' }}
